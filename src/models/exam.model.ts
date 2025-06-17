@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
-import {Exam} from '../types/modelInterface'
-const examSchema=new mongoose.Schema<Exam>({
+import {IExam} from '../types/modelInterface'
+const examSchema=new mongoose.Schema<IExam>({
+    datesheetId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "DateSheet",
+    },
     examName:{
         type:String,
         required:true
@@ -30,5 +34,5 @@ const examSchema=new mongoose.Schema<Exam>({
     timestamps:true
 })
 
-const Exam=mongoose.model<Exam>("Exam",examSchema);
+const Exam=mongoose.model<IExam>("Exam",examSchema);
 export default Exam;

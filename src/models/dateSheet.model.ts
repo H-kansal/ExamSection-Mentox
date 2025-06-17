@@ -1,12 +1,7 @@
 import mongoose from "mongoose";
-import {DateSheet} from '../types/modelInterface'
+import {IDateSheet} from '../types/modelInterface'
 
-const datesheetSchema = new mongoose.Schema<DateSheet>({
-    examId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Exam",
-        required: true
-    },
+const datesheetSchema = new mongoose.Schema<IDateSheet>({
     academicTerm:{
         type: String,
         required: true
@@ -28,7 +23,15 @@ const datesheetSchema = new mongoose.Schema<DateSheet>({
         }],
         required: true
     },
+    examName:{
+        type:String,
+        required:true
+    },
+    examClass:{
+        type:Number,
+        required:true
+    },
 })
 
-const DateSheet = mongoose.model<DateSheet>("DateSheet", datesheetSchema);
+const DateSheet = mongoose.model<IDateSheet>("DateSheet", datesheetSchema);
 export default DateSheet;

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import {StudentMarks} from '../types/modelInterface'
+import {IStudentMarks} from '../types/modelInterface'
 
-const studentMarksSchema =new mongoose.Schema<StudentMarks>({
+const studentMarksSchema =new mongoose.Schema<IStudentMarks>({
     examId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Exam",
@@ -41,5 +41,5 @@ const studentMarksSchema =new mongoose.Schema<StudentMarks>({
     timestamps: true
 })
 
-const StudentMarks = mongoose.model<StudentMarks>("StudentMarks", studentMarksSchema);
+const StudentMarks = mongoose.model<IStudentMarks>("StudentMarks", studentMarksSchema);
 export default StudentMarks;

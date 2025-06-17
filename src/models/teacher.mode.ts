@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import {Teacher} from '../types/modelInterface'
+import {ITeacher} from '../types/modelInterface'
 import { Schema } from "mongoose";
 
-const teacherSchema= new Schema<Teacher>({
+const teacherSchema= new Schema<ITeacher>({
     name: {
         firstName: {
             type: String,
@@ -42,5 +42,5 @@ const teacherSchema= new Schema<Teacher>({
     timestamps: true
 })
 
-const Teacher = mongoose.model<Teacher>("Teacher", teacherSchema);
+const Teacher = mongoose.model<ITeacher>("Teacher", teacherSchema);
 export default Teacher;

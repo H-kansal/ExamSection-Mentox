@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import {Student} from '../types/modelInterface'
+import {IStudent} from '../types/modelInterface'
 
-const studentSchema= new mongoose.Schema<Student>({
+const studentSchema= new mongoose.Schema<IStudent>({
     name:{
         firstName:{
             type: String,
@@ -86,5 +86,5 @@ const studentSchema= new mongoose.Schema<Student>({
     }
 },{timestamps:true})
 
-const Student = mongoose.model<Student>("Student", studentSchema);
+const Student = mongoose.model<IStudent>("Student", studentSchema);
 export default Student;

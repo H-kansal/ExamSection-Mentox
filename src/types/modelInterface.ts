@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export interface Teacher {
+export interface ITeacher {
     name: {
         firstName: string;
         lastName: string;
@@ -15,7 +15,7 @@ export interface Teacher {
     updatedAt?: Date;
 }
 
-export interface StudentMarks {
+export interface IStudentMarks {
     examId: mongoose.Types.ObjectId ;
     studentId: mongoose.Types.ObjectId;
     marks: Map<string, number>;
@@ -28,7 +28,7 @@ export interface StudentMarks {
     updatedAt?: Date;
 }
 
-export interface Student {
+export interface IStudent {
     name: {
         firstName: string;
         lastName: string;
@@ -57,14 +57,15 @@ export interface Student {
     updatedAt?: Date;
 }
 
-export interface ExamPaper{
+export interface IExamPaper{
    examId:mongoose.Types.ObjectId;
    teacherId:mongoose.Types.ObjectId;
    academicTerm:string;
    subject:string;
 }
 
-export interface Exam {
+export interface IExam {
+    datesheetId:mongoose.Types.ObjectId;
     examName: string;
     examClass: number;
     examStatus: "active" | "completed" | "draft";
@@ -75,12 +76,13 @@ export interface Exam {
     updatedAt?: Date;
 }
 
-export interface DateSheet {
-    examId: mongoose.Types.ObjectId;
+export interface IDateSheet {
     academicTerm: string;
     datesheet: Array<{
         subject: string;
         date: Date;
         time: string;
     }>;
+    examName:string
+    examClass:number
 }

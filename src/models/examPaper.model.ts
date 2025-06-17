@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import {ExamPaper} from '../types/modelInterface'
+import {IExamPaper} from '../types/modelInterface'
 
-const exampaperSchema = new mongoose.Schema<ExamPaper>({
+const exampaperSchema = new mongoose.Schema<IExamPaper>({
     teacherId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Teacher",
@@ -22,5 +22,5 @@ const exampaperSchema = new mongoose.Schema<ExamPaper>({
     }
 })
 
-const ExamPaper = mongoose.model<ExamPaper>("ExamPaper", exampaperSchema);
+const ExamPaper = mongoose.model<IExamPaper>("ExamPaper", exampaperSchema);
 export default ExamPaper;
