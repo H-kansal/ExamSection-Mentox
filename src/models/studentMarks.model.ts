@@ -36,6 +36,10 @@ const studentMarksSchema =new mongoose.Schema<IStudentMarks>({
         type: String,
         enum: ["passed", "failed"],
         required: true
+    },
+    academicYear:{
+        type:String,
+        required:true
     }
 },{
     timestamps: true

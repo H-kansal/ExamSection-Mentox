@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import {IDateSheet} from '../types/modelInterface'
 
 const datesheetSchema = new mongoose.Schema<IDateSheet>({
-    academicTerm:{
+    academicYear:{
         type: String,
         required: true
     },

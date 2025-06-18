@@ -20,11 +20,9 @@ const examSchema=new mongoose.Schema<IExam>({
     },
     examTerm:{
         type:String,
-        required:true
     },
     examDateRange:{
         type:String,
-        required:true
     },
     academicYear:{
         type:String,

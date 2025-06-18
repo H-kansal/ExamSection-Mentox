@@ -16,9 +16,12 @@ const exampaperSchema = new mongoose.Schema<IExamPaper>({
         type: String,
         required: true
     },
-    academicTerm:{
+    academicYear:{
         type: String,
         required: true
+    },
+    dueDateforMarks:{
+        type:Date
     }
 })
 

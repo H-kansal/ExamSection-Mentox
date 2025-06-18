@@ -24,6 +24,7 @@ export interface IStudentMarks {
     overallGrade: string;
     percentage: number;
     status: "passed" | "failed";
+    academicYear:string
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -60,8 +61,9 @@ export interface IStudent {
 export interface IExamPaper{
    examId:mongoose.Types.ObjectId;
    teacherId:mongoose.Types.ObjectId;
-   academicTerm:string;
+   academicYear:string;
    subject:string;
+   dueDateforMarks:Date;
 }
 
 export interface IExam {
@@ -77,7 +79,7 @@ export interface IExam {
 }
 
 export interface IDateSheet {
-    academicTerm: string;
+    academicYear: string;
     datesheet: Array<{
         subject: string;
         date: Date;
