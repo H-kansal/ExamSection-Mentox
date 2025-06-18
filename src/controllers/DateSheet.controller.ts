@@ -1,10 +1,10 @@
-import asyncHandler from "../utils/asyncHandler";
-import ApiError from "../utils/apiError";
-import ApiResponse from "../utils/apiResponse";
-import {StatusCode} from '../types/statusCode'
+import asyncHandler from "../utils/asyncHandler.js";
+import ApiError from "../utils/apiError.js";
+import ApiResponse from "../utils/apiResponse.js";
+import {StatusCode} from '../types/statusCode.js'
 import { Request,Response } from "express";
-import DateSheet from "../models/dateSheet.model";
-import Exam from '../models/exam.model'
+import DateSheet from "../models/dateSheet.model.js";
+import Exam from '../models/exam.model.js'
 import mongoose from "mongoose";
 
 export const searchDateSheet=asyncHandler(async(req:Request,res:Response)=>{

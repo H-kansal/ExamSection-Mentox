@@ -1,10 +1,10 @@
-import asyncHandler from "../utils/asyncHandler";
-import ApiError from "../utils/apiError";
-import ApiResponse from "../utils/apiResponse";
-import {StatusCode} from '../types/statusCode'
+import asyncHandler from "../utils/asyncHandler.js";
+import ApiError from "../utils/apiError.js";
+import ApiResponse from "../utils/apiResponse.js";
+import {StatusCode} from '../types/statusCode.js'
 import { Request,Response } from "express";
-import Teacher from '../models/teacher.mode'
-import ExamPaper from '../models/examPaper.model'
+import Teacher from '../models/teacher.mode.js'
+import ExamPaper from '../models/examPaper.model.js'
 import mongoose from "mongoose";
 
 export const showAllExam=asyncHandler(async(req:Request,res:Response)=>{
@@ -22,4 +22,3 @@ export const showAllExam=asyncHandler(async(req:Request,res:Response)=>{
      
      res.status(StatusCode.OK).json(new ApiResponse(StatusCode.OK,"all assigned papers",allPapers));
 })
-

@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import ConnectDb from './config/db.config';
+import ConnectDb from './config/db.config.js';   // .js extension because i use es module not commonjs module
 import cookieParser from 'cookie-parser';
 import cors from 'cors'
 dotenv.config();
@@ -23,3 +23,10 @@ ConnectDb().then(()=>{
 }).catch(()=>{
    console.log('Error connecting to database')
 })
+
+
+import teacherRouter from './routes/teacher.route.js'
+import newExamRouter from './routes/newExam.route.js'
+import examAnaltyicsRouter from './routes/examAnalytics.route.js'
+import datesheetRouter from './routes/dateSheet.routes.js'
+

@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "target": "es6",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "./dist", // Output directory for compiled JS
+    "rootDir": "./src"  // Root directory for TypeScript source files
+  },
+  "include": [
+    "src/**/*.ts" // Include all .ts files in the src directory
+  ],
+  "exclude": [
+    "node_modules" // Exclude node_modules
+  ]
+}

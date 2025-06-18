@@ -1,10 +1,10 @@
-import asyncHandler from "../utils/asyncHandler";
-import ApiError from "../utils/apiError";
-import ApiResponse from "../utils/apiResponse";
-import {StatusCode} from '../types/statusCode'
+import asyncHandler from "../utils/asyncHandler.js";
+import ApiError from "../utils/apiError.js";
+import ApiResponse from "../utils/apiResponse.js";
+import {StatusCode} from '../types/statusCode.js'
 import { Request,Response } from "express";
-import Exam from '../models/exam.model'
-import { IExam } from "../types/modelInterface";
+import Exam from '../models/exam.model.js'
+import { IExam } from "../types/modelInterface.js";
 
 export const addNewExam=asyncHandler(async(req:Request,res:Response)=>{
     const {examName,examClass,examStatus,examTerm,examDateRange,academicTerm}=req.body;
@@ -19,3 +19,4 @@ export const addNewExam=asyncHandler(async(req:Request,res:Response)=>{
 
     res.status(StatusCode.Created).json(new ApiResponse(StatusCode.Created,"Exam created",newExam));
 })
+

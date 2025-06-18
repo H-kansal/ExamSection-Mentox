@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {createDateSheet,editDateSheet,deleteDatesheet,searchDateSheet} from '../controllers/DateSheet.controller'
+import {createDateSheet,editDateSheet,deleteDatesheet,searchDateSheet} from '../controllers/DateSheet.controller.js'
 const datesheetRouter=Router();
 
 

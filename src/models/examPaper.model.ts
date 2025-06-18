@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import {IExamPaper} from '../types/modelInterface'
+import {IExamPaper} from '../types/modelInterface.js'
 
 const exampaperSchema = new mongoose.Schema<IExamPaper>({
     teacherId:{

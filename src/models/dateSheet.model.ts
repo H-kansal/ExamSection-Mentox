@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import {IDateSheet} from '../types/modelInterface'
+import {IDateSheet} from '../types/modelInterface.js'
 
 const datesheetSchema = new mongoose.Schema<IDateSheet>({
     academicYear:{
