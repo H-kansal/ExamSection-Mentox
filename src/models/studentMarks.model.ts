@@ -16,17 +16,12 @@ const studentMarksSchema =new mongoose.Schema<IStudentMarks>({
         type:Map,
         of:Number,
     },
-    grade:{
-        type:Map,
-        of:String,
-    },
     totalMarks: {
         type: Number,
         required: true
     },
-    overallGrade:{
-        type: String,
-        required: true
+    weigthage:{
+        type:Number
     },
     percentage:{
         type: Number,
