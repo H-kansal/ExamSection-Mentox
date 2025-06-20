@@ -25,5 +25,13 @@ const reportCardSchema=new mongoose.Schema<IReporCard>({
     subjectGrade:{
         type:Map,
         of:String
+    },
+    status: {
+        type: String,
+        enum: ["passed", "failed"],
+        required: true
     }
 })
+
+const Report=mongoose.model<IReporCard>("ReportCard",reportCardSchema);
+export default Report;

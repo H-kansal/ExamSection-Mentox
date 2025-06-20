@@ -22,7 +22,7 @@ export interface IStudentMarks{
     totalMarks: number;
     weigthage:number;
     percentage: number;
-    status: "passed" | "failed";
+    
     academicYear:string
     createdAt?: Date;
     updatedAt?: Date;
@@ -96,4 +96,13 @@ export interface IReporCard{
    OverallGrade:string;
    overallMarks:number;
    academicYear:string;
+   status: "passed" | "failed";
+}
+
+export interface IGrades{
+    grades: Array<{
+        range: string;
+        grade: string;
+        points: number;
+    }>;
 }

@@ -27,11 +27,6 @@ const studentMarksSchema =new mongoose.Schema<IStudentMarks>({
         type: Number,
         required: true
     },
-    status: {
-        type: String,
-        enum: ["passed", "failed"],
-        required: true
-    },
     academicYear:{
         type:String,
         required:true
