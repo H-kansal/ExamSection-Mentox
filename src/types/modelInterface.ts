@@ -22,7 +22,7 @@ export interface IStudentMarks{
     totalMarks: number;
     weigthage:number;
     percentage: number;
-    
+    remark:string
     academicYear:string
     createdAt?: Date;
     updatedAt?: Date;
@@ -61,6 +61,7 @@ export interface IExamPaper{
    examId:mongoose.Types.ObjectId;
    teacherId:mongoose.Types.ObjectId;
    academicYear:string;
+   section:string;
    subject:string;
    dueDateforMarks:Date;
 }

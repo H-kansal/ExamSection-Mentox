@@ -16,11 +16,11 @@ export const examAnalytics=asyncHandler(async(req:Request,res:Response)=>{
         examClass,
         academicYear
      })
-
+    
      if(!exam) throw new ApiError(StatusCode.InternalServerError,"something went wrong please try again");
 
      if(exam.length==0) res.status(StatusCode.NotFound).json(new ApiResponse(StatusCode.NotFound,"no such exam exist",exam));
-
+ 
     const examAnalytics=await StudentMarks.aggregate([
         {
             $match:{

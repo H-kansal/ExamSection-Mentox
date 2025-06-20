@@ -16,6 +16,9 @@ const exampaperSchema = new mongoose.Schema<IExamPaper>({
         type: String,
         required: true
     },
+    section:{
+       type:String,
+    },
     academicYear:{
         type: String,
         required: true

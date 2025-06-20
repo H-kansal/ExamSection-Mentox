@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import ConnectDb from './config/db.config.js';   // .js extension because i use es module not commonjs module
+import ConnectDb from './config/db.config.js';   // .js extension because i use es-module not commonjs module
 import cookieParser from 'cookie-parser';
 import cors from 'cors'
 dotenv.config();

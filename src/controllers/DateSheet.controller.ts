@@ -24,7 +24,7 @@ export const searchDateSheet=asyncHandler(async(req:Request,res:Response)=>{
 })
 
 export const deleteDatesheet=asyncHandler(async(req:Request,res:Response)=>{
-      const datesheetId:string=req.query.datesheetId as string;
+      const datesheetId:string=req.body.datesheetId as string;
 
       if(!datesheetId) throw new ApiError(StatusCode.BadRequest,"please provide the id");
 

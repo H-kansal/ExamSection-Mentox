@@ -30,6 +30,9 @@ const studentMarksSchema =new mongoose.Schema<IStudentMarks>({
     academicYear:{
         type:String,
         required:true
+    },
+    remark:{
+        type:String
     }
 },{
     timestamps: true
