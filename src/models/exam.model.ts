@@ -18,6 +18,9 @@ const examSchema=new mongoose.Schema<IExam>({
         enum:["active","completed","draft"],
         default:"active"
     },
+    sections:{
+        type:[String]
+    },
     examTerm:{
         type:String,
     },

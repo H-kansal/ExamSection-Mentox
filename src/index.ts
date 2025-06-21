@@ -29,4 +29,5 @@ import teacherRouter from './routes/teacher.route.js'
 import newExamRouter from './routes/newExam.route.js'
 import examAnaltyicsRouter from './routes/examAnalytics.route.js'
 import datesheetRouter from './routes/dateSheet.routes.js'
-
+import marksRouter from './routes/marks.routes.js';
+import gradeRouter from './routes/gardes.route.js';

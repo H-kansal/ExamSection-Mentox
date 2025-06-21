@@ -4,7 +4,7 @@ import ApiResponse from "../utils/apiResponse.js";
 import {StatusCode} from '../types/statusCode.js'
 import { Request,Response } from "express";
 import Teacher from '../models/teacher.mode.js'
-import ExamPaper from '../models/examPaper.model.js'
+import MarksAssign from '../models/marksAssign.model.js'
 import mongoose from "mongoose";
 
 export const showExam=asyncHandler(async(req:Request,res:Response)=>{
@@ -14,7 +14,7 @@ export const showExam=asyncHandler(async(req:Request,res:Response)=>{
      if(!teacherId) throw new ApiError(StatusCode.BadRequest,"bad request");
      
      if(category==="all exam"){
-         const allPapers=await ExamPaper.find({
+         const allPapers=await MarksAssign.find({
             teacherId:new mongoose.Types.ObjectId(teacherId)
          }).populate({
             path:'examId'
@@ -27,7 +27,7 @@ export const showExam=asyncHandler(async(req:Request,res:Response)=>{
 
      else{
 
-        const inprogressPapers=await ExamPaper.aggregate([
+        const inprogressPapers=await MarksAssign.aggregate([
            {
               $match:{
                  teacherId:new mongoose.Types.ObjectId(teacherId)

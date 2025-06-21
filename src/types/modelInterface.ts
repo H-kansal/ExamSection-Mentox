@@ -18,7 +18,11 @@ export interface ITeacher{
 export interface IStudentMarks{
     examId: mongoose.Types.ObjectId ;
     studentId: mongoose.Types.ObjectId;
-    marks: Map<string, number>;
+    marks: Array<{
+        subject:string,
+        obtaineMarks:number,
+        maximumMarks:number
+    }>;
     totalMarks: number;
     weigthage:number;
     percentage: number;
@@ -63,6 +67,7 @@ export interface IExamPaper{
    academicYear:string;
    section:string;
    subject:string;
+   startDate:Date;
    dueDateforMarks:Date;
 }
 
@@ -72,6 +77,7 @@ export interface IExam{
     examClass: number;
     examStatus: "active" | "completed" | "draft";
     examTerm: string;
+    sections:Array<string>;
     examDateRange: string;
     academicYear: string;
     createdAt?: Date;

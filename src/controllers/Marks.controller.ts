@@ -6,7 +6,88 @@ import { Request,Response } from "express";
 import StudentMarks from "../models/studentMarks.model.js";
 import mongoose from "mongoose";
 import Exam from "../models/exam.model.js";
+import Teacher from "../models/teacher.mode.js";
+import MarksAssign from "../models/marksAssign.model.js";
 
+export const showAssignMarksPortal=asyncHandler(async(req:Request,res:Response)=>{
+    const {academicYear,examName}=req.body;
+    
+    if(!academicYear || !examName) throw new ApiError(StatusCode.BadRequest,"please provide all fields");
+    
+    const allexams=await Exam.aggregate([
+        {
+            $match:{
+                academicYear:academicYear,
+                examName:examName
+            }
+        },
+        {
+            $lookup:{
+                from:"datesheets",
+                localField:"datesheetId",
+                foreignField:"_id",
+                as:"datesheetinfo"
+            }
+        },
+        {
+            $unwind:"$datesheetinfo"
+        },
+        {
+            $project:{
+                datesheetId:0,
+                examDateRange:0,
+                examName:1,
+                sectionsCount:{$size:"$sections"},
+                examTerm:1,
+                academicYear:1,
+                subjects:"$datesheetinfo.datesheet",
+                subjectsCount:{$size:"$datesheetinfo.datesheet"}
+            }
+        }
+    ])
+    
+    if(!allexams) throw new ApiError(StatusCode.InternalServerError,"something went wronng");
+    
+    res.status(StatusCode.OK).json(new ApiResponse(StatusCode.OK,"all exams send",allexams));
+})
+
+
+export const assignMarksToTeacher=asyncHandler(async(req:Request,res:Response)=>{
+    const {academicYear,examClass,section,examName,startDate,endDate,assignTeachers}=req.body;
+
+    if(!academicYear || !examClass || !section || !examName || !startDate || !endDate || !assignTeachers) throw new ApiError(StatusCode.BadRequest,"please provide all required fileds");
+    
+    
+    for(const ele of assignTeachers){
+        const teacher=await Teacher.findOne({
+            name:ele.teacher,
+            subjectSpecialization:ele.subject
+        })
+        
+        if(!teacher) throw new ApiError(StatusCode.InternalServerError,"please try again or enter a valid teacher")
+       const exam=await Exam.findOne({
+            academicYear,
+            examClass,
+            examName
+       })
+       
+       if(!exam) throw new ApiError(StatusCode.InternalServerError,"please try again or enter a valid exam")
+
+       const assigned=await MarksAssign.create({
+            teacherId:teacher?._id,
+            examId:exam?._id,
+            subject:ele.subject,
+            section:section,
+            academicYear:academicYear,
+            startDate:startDate,
+            dueDateforMarks:endDate
+       })
+
+       if(!assigned) throw new ApiError(StatusCode.InternalServerError,"please try again")
+    }
+
+    res.status(StatusCode.Created).json(new ApiResponse(StatusCode.Created,"marks are assigned to teacher"));
+})
 
 export const enterMark=asyncHandler(async(req:Request,res:Response)=>{
     const examId:string=req.body.examId as string
@@ -57,7 +138,7 @@ export const SubmitStudentMarks=asyncHandler(async(req:Request,res:Response)=>{
       const examId:string=req.body.examId as string 
       const {subject,marks}=req.body;
       // marks is a object containing the studentId and the marks fot that subject
-    
+      
       // loop to update the marks
       for(const entry of marks){
           const studentId:string=entry.studentId as string;
@@ -69,7 +150,7 @@ export const SubmitStudentMarks=asyncHandler(async(req:Request,res:Response)=>{
           },
           {
                 $set:{
-                    [`marks.${subject}`]: score
+                    [`marks.${subject}`]: score    // have to change!!!! also update from all other controllers
                 }
           })
       }

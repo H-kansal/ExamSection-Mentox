@@ -12,9 +12,20 @@ const studentMarksSchema =new mongoose.Schema<IStudentMarks>({
         ref: "Student",
         required: true
     },
-    marks:{
-        type:Map,
-        of:Number,
+    marks:{        // marks details of student of all subject of that exam
+        type:[
+            {
+                subject:{
+                    type:String
+                },
+                obtainMarks:{
+                    type:Number
+                },
+                maximumMarks:{
+                    type:Number
+                }
+            }
+        ]
     },
     totalMarks: {
         type: Number,

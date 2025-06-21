@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import {IExamPaper} from '../types/modelInterface.js'
 
-const exampaperSchema = new mongoose.Schema<IExamPaper>({
+const marksAssignSchema = new mongoose.Schema<IExamPaper>({
     teacherId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Teacher",
@@ -23,10 +23,13 @@ const exampaperSchema = new mongoose.Schema<IExamPaper>({
         type: String,
         required: true
     },
+    startDate:{
+        type:Date
+    },
     dueDateforMarks:{
         type:Date
     }
 })
 
-const ExamPaper = mongoose.model<IExamPaper>("ExamPaper", exampaperSchema);
-export default ExamPaper;
+const MarksAssign = mongoose.model<IExamPaper>("MarksAssign", marksAssignSchema);
+export default MarksAssign;

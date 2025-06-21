@@ -12,10 +12,23 @@ export const searchDateSheet=asyncHandler(async(req:Request,res:Response)=>{
 
     if(!academicYear || !examName) throw new ApiError(StatusCode.BadRequest,"please provide all valid field");
 
-    const dateSheet=await DateSheet.find({
-        examName,
-        academicYear
-    })
+    const dateSheet=await DateSheet.aggregate([
+        {
+            $match:{
+                academicYear:academicYear,
+                examName:examName
+            }
+        },
+        {
+            $project:{
+                academicYear:1,
+                examName:1,
+                examClass:1,
+                subjectCount:{$size:"$datesheet"},
+                createdAt:1
+            }
+        }
+    ])
     
     
     if(!dateSheet) throw new ApiError(StatusCode.NotFound,"date sheet not found");
@@ -72,21 +85,9 @@ export const createDateSheet=asyncHandler(async(req:Request,res:Response)=>{
         academicYear
     })
 
-
-    if(exam){
-        exam.datesheetId=newdatesheet._id
-        await exam.save({validateBeforeSave:false})
-    }
-    else{
-        const newExam=await Exam.create({
-            examName,
-            examClass,
-            academicYear
-        })
-
-        newExam.datesheetId=newdatesheet._id
-        await newExam.save({validateBeforeSave:false});
-    }
-
+    if(!exam) throw new ApiError(StatusCode.InternalServerError,"please try again or check if the exam exist for this datesheet");
+    
+    exam.datesheetId=newdatesheet._id
+    await exam.save({validateBeforeSave:false})
     res.status(StatusCode.Created).json(new ApiResponse(StatusCode.Created,"new datesheet created",newdatesheet));
 })
