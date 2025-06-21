@@ -18,9 +18,20 @@ const reportCardSchema=new mongoose.Schema<IReporCard>({
     percentage:{
        type:Number
     },
-    subjectMarks:{
-        type:Map,
-        of:Number
+    subjectMarks:{        // marks details of student of all subject 
+        type:[
+            {
+                subject:{
+                    type:String
+                },
+                obtainMarks:{
+                    type:Number
+                },
+                maximumMarks:{
+                    type:Number
+                }
+            }
+        ]
     },
     subjectGrade:{
         type:Map,

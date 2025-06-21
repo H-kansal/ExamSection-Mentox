@@ -20,7 +20,7 @@ export interface IStudentMarks{
     studentId: mongoose.Types.ObjectId;
     marks: Array<{
         subject:string,
-        obtaineMarks:number,
+        obtainMarks:number,
         maximumMarks:number
     }>;
     totalMarks: number;
@@ -98,7 +98,11 @@ export interface IDateSheet{
 export interface IReporCard{
    studentId:mongoose.Types.ObjectId;
    subjectGrade:Map<string,string>;
-   subjectMarks:Map<string,number>;
+   subjectMarks:Array<{
+        subject:string,
+        obtainMarks:number,
+        maximumMarks:number
+    }>;
    percentage:number;
    OverallGrade:string;
    overallMarks:number;
