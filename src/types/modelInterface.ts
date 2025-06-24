@@ -18,15 +18,12 @@ export interface ITeacher{
 export interface IStudentMarks{
     examId: mongoose.Types.ObjectId ;
     studentId: mongoose.Types.ObjectId;
-    marks: Array<{
-        subject:string,
-        obtainMarks:number,
-        maximumMarks:number
-    }>;
+    marks: Map<string,number>;
+    maximumMarks:Map<string,number>;
     totalMarks: number;
     weigthage:number;
     percentage: number;
-    remark:string
+    remark:Map<string,string>
     academicYear:string
     createdAt?: Date;
     updatedAt?: Date;

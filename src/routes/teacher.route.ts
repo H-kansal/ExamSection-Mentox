@@ -4,5 +4,4 @@ import { Router } from 'express';
 const teacherRouter=Router();
 
 teacherRouter.route('/teacherexam').get(showExam);
-
 export default teacherRouter;

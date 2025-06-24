@@ -31,3 +31,12 @@ import examAnaltyicsRouter from './routes/examAnalytics.route.js'
 import datesheetRouter from './routes/dateSheet.routes.js'
 import marksRouter from './routes/marks.routes.js';
 import gradeRouter from './routes/gardes.route.js';
+import filterRouter from './routes/filter.route.js';
+
+app.use('/api/exam',newExamRouter);
+app.use('/api/exam',datesheetRouter);
+app.use('/api/exam',gradeRouter);
+app.use('/api/exam',examAnaltyicsRouter);
+app.use('/api/exam',filterRouter);
+app.use('/api/exam',teacherRouter);
+app.use('/api/exam',marksRouter);

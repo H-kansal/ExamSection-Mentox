@@ -15,7 +15,7 @@ export const createGrade=asyncHandler(async(req:Request,res:Response)=>{
 
     gradeScheme.grades.push({range,grade,points});
     await gradeScheme.save();
-
+    
     res.status(StatusCode.OK).json(new ApiResponse(StatusCode.OK,"range added"));
 })
 
