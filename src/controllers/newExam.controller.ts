@@ -7,12 +7,12 @@ import Exam from '../models/exam.model.js'
 import { IExam } from "../types/modelInterface.js";
 
 export const addNewExam=asyncHandler(async(req:Request,res:Response)=>{
-    const {examName,examClass,examStatus,examTerm,examDateRange,academicTerm}=req.body;
+    const {examName,examClass,examStatus,examTerm,examDateRange,academicYear,sections}=req.body;
 
-    if(!examName || !examClass || !examStatus || !examTerm || !examDateRange || !academicTerm) throw new ApiError(StatusCode.BadRequest,"please provide all details");
+    if(!examName || !examClass || !examStatus || !examTerm || !examDateRange || !academicYear || !sections) throw new ApiError(StatusCode.BadRequest,"please provide all details");
 
     const newExam=await Exam.create({
-        examName,examClass,examStatus,examTerm,examDateRange,academicTerm
+        examName,examClass,examStatus,examTerm,examDateRange,academicYear,sections
     })
 
     if(!newExam) throw new ApiError(StatusCode.InternalServerError,"request fail please try again")

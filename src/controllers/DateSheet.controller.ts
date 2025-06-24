@@ -6,6 +6,7 @@ import { Request,Response } from "express";
 import DateSheet from "../models/dateSheet.model.js";
 import Exam from '../models/exam.model.js'
 import mongoose from "mongoose";
+import Student from "../models/student.mode.js";
 
 export const searchDateSheet=asyncHandler(async(req:Request,res:Response)=>{
      const {academicYear,examName}=req.body;
@@ -37,7 +38,7 @@ export const searchDateSheet=asyncHandler(async(req:Request,res:Response)=>{
 })
 
 export const deleteDatesheet=asyncHandler(async(req:Request,res:Response)=>{
-      const datesheetId:string=req.body.datesheetId as string;
+      const datesheetId:string=req.params.datesheetId as string;
 
       if(!datesheetId) throw new ApiError(StatusCode.BadRequest,"please provide the id");
 
@@ -51,7 +52,7 @@ export const deleteDatesheet=asyncHandler(async(req:Request,res:Response)=>{
 export const editDateSheet=asyncHandler(async(req:Request,res:Response)=>{
       const {academicYear,examName,examClass,datesheet}=req.body;
       const datesheetId:string=req.body.datesheetId as string
-
+      
       if(!datesheetId || !academicYear || !examName || !examClass || !datesheet) throw new ApiError(StatusCode.BadRequest,"please provide all fields");
 
       const Updatedatesheet=await DateSheet.findByIdAndUpdate(
@@ -68,16 +69,6 @@ export const editDateSheet=asyncHandler(async(req:Request,res:Response)=>{
 export const createDateSheet=asyncHandler(async(req:Request,res:Response)=>{
     const {academicYear,examName,examClass,datesheet}=req.body;
 
-    
-    const newdatesheet=await DateSheet.create({
-        academicYear,
-        examName,
-        examClass,
-        datesheet
-    })
-    
-    if(!newdatesheet) throw new ApiError(StatusCode.InternalServerError,"something went wrong, please try again");
-    
     // first checking the exam for this datesheet,exist or not
     const exam=await Exam.findOne({
         examName,
@@ -86,7 +77,14 @@ export const createDateSheet=asyncHandler(async(req:Request,res:Response)=>{
     })
 
     if(!exam) throw new ApiError(StatusCode.InternalServerError,"please try again or check if the exam exist for this datesheet");
+    const newdatesheet=await DateSheet.create({
+        academicYear,
+        examName,
+        examClass,
+        datesheet
+    })
     
+    if(!newdatesheet) throw new ApiError(StatusCode.InternalServerError,"something went wrong, please try again");
     exam.datesheetId=newdatesheet._id
     await exam.save({validateBeforeSave:false})
     res.status(StatusCode.Created).json(new ApiResponse(StatusCode.Created,"new datesheet created",newdatesheet));

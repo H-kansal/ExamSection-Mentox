@@ -8,7 +8,10 @@ import mongoose from "mongoose";
 import Exam from "../models/exam.model.js";
 import Teacher from "../models/teacher.mode.js";
 import MarksAssign from "../models/marksAssign.model.js";
+import Student from "../models/student.mode.js";
 
+
+// 
 export const showAssignMarksPortal=asyncHandler(async(req:Request,res:Response)=>{
     const {academicYear,examName}=req.body;
     
@@ -34,8 +37,6 @@ export const showAssignMarksPortal=asyncHandler(async(req:Request,res:Response)=
         },
         {
             $project:{
-                datesheetId:0,
-                examDateRange:0,
                 examName:1,
                 sectionsCount:{$size:"$sections"},
                 examTerm:1,
@@ -52,26 +53,31 @@ export const showAssignMarksPortal=asyncHandler(async(req:Request,res:Response)=
 })
 
 
+// assign maarks to teacher
 export const assignMarksToTeacher=asyncHandler(async(req:Request,res:Response)=>{
     const {academicYear,examClass,section,examName,startDate,endDate,assignTeachers}=req.body;
 
     if(!academicYear || !examClass || !section || !examName || !startDate || !endDate || !assignTeachers) throw new ApiError(StatusCode.BadRequest,"please provide all required fileds");
-    
-    
-    for(const ele of assignTeachers){
-        const teacher=await Teacher.findOne({
-            name:ele.teacher,
-            subjectSpecialization:ele.subject
-        })
-        
-        if(!teacher) throw new ApiError(StatusCode.InternalServerError,"please try again or enter a valid teacher")
-       const exam=await Exam.findOne({
+    const exam=await Exam.findOne({
             academicYear,
             examClass,
             examName
        })
        
        if(!exam) throw new ApiError(StatusCode.InternalServerError,"please try again or enter a valid exam")
+    
+    for(const ele of assignTeachers){
+        const name={
+            firstName:ele.teacher.split(" ")[0],
+            lastName:ele.teacher.split(" ")[1]
+        }
+        const teacher=await Teacher.findOne({
+            name:name,
+            subjectSpecialization:{ $regex: `^${ele.subject}$`, $options: "i" }
+        })
+        
+        if(!teacher) throw new ApiError(StatusCode.InternalServerError,"please try again or enter a valid teacher")
+       
 
        const assigned=await MarksAssign.create({
             teacherId:teacher?._id,
@@ -82,18 +88,37 @@ export const assignMarksToTeacher=asyncHandler(async(req:Request,res:Response)=>
             startDate:startDate,
             dueDateforMarks:endDate
        })
-
+        
        if(!assigned) throw new ApiError(StatusCode.InternalServerError,"please try again")
     }
+
+    const students=await Student.find({
+         class:examClass,
+         section:section
+    })
+    
+    if(!students) throw new ApiError(StatusCode.InternalServerError,"something went wrong");
+    for(const student of students){
+        await StudentMarks.create({
+            examId:exam._id,
+            studentId:student._id,
+            academicYear:academicYear
+        })
+    }
+
+
 
     res.status(StatusCode.Created).json(new ApiResponse(StatusCode.Created,"marks are assigned to teacher"));
 })
 
+
+
+// when teacher click on enter mark btn
 export const enterMark=asyncHandler(async(req:Request,res:Response)=>{
     const examId:string=req.body.examId as string
     const {section,subject}=req.body;   // need examid,section,subject only which are send when we are sending the teacher assign exams, this decrease the search for that specific exam
 
-    const students=StudentMarks.aggregate([
+    const students=await StudentMarks.aggregate([
         {
             $match:{
                 examId:new mongoose.Types.ObjectId(examId)
@@ -125,7 +150,9 @@ export const enterMark=asyncHandler(async(req:Request,res:Response)=>{
                 subjectMarks: {
                     $ifNull: [`$marks.${subject}`, null]
                 },
-                remark:1           
+                remark:{
+                    $ifNull: [`$remark.${subject}`, null]
+                }
             }
        }
     ])
@@ -134,23 +161,30 @@ export const enterMark=asyncHandler(async(req:Request,res:Response)=>{
     res.status(StatusCode.OK).json(new ApiResponse(StatusCode.OK,"all students marks",students));
 })
 
+
+//for submit button
 export const SubmitStudentMarks=asyncHandler(async(req:Request,res:Response)=>{
       const examId:string=req.body.examId as string 
-      const {subject,marks}=req.body;
-      // marks is a object containing the studentId and the marks fot that subject
+      const {subject,marks,maxMarks}=req.body;
+      // marks is a object containing the studentId and the marks fot that subject and remark
       
       // loop to update the marks
       for(const entry of marks){
           const studentId:string=entry.studentId as string;
-          const {score}=req.body;
-
+          const score=entry.score;
+          const remark=entry.remark
           await StudentMarks.updateOne({
             studentId:new mongoose.Types.ObjectId(studentId),
             examId:new mongoose.Types.ObjectId(examId)
           },
           {
                 $set:{
-                    [`marks.${subject}`]: score    // have to change!!!! also update from all other controllers
+                    [`marks.${subject}`]: score,
+                    [`maximumMarks.${subject}`]:maxMarks,
+                    [`remark.${subject}`]:remark
+                },
+                $inc:{
+                    totalMarks:score
                 }
           })
       }
@@ -158,6 +192,8 @@ export const SubmitStudentMarks=asyncHandler(async(req:Request,res:Response)=>{
       res.status(StatusCode.OK).json(new ApiResponse(StatusCode.OK,"update successfully"));
 })
 
+
+// search wala
 export const viewMark=asyncHandler(async(req:Request,res:Response)=>{
     const {session,examClass,subject,examName,section}=req.body;
 
@@ -167,7 +203,7 @@ export const viewMark=asyncHandler(async(req:Request,res:Response)=>{
         examName
     })
 
-    const students=StudentMarks.aggregate([
+    const students=await StudentMarks.aggregate([
         {
             $match:{
                 examId:exam?._id
