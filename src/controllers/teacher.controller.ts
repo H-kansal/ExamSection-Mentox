@@ -8,7 +8,7 @@ import MarksAssign from '../models/marksAssign.model.js'
 import mongoose from "mongoose";
 
 export const showExam=asyncHandler(async(req:Request,res:Response)=>{
-    const teacherId:string = req.query.teacherId as string;
+    const teacherId:string = req.user?.teacherId as string;
     const {category}=req.query;
 
      if(!teacherId) throw new ApiError(StatusCode.BadRequest,"bad request");

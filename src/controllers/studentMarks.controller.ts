@@ -8,6 +8,7 @@ import Student from "../models/student.mode.js";
 import StudentMarks from "../models/studentMarks.model.js";
 import Report from "../models/ReportCard.model.js";
 import Exam from "../models/exam.model.js";
+import {generateReportCard} from '../utils/generateAnnualReport.js'
 
 /**
  * @description Get a student's detailed performance for a specific exam
@@ -25,7 +26,7 @@ const getExamResultForStudent = asyncHandler(async (req: Request, res: Response)
     // Fetch student details and exam marks concurrently
     const [student, studentMarks, exam] = await Promise.all([
         Student.findById(studentId).select("name rollNumber class section academicYear"),
-        StudentMarks.findOne({ studentId, examId }),
+        StudentMarks.findOne({ studentId:new mongoose.Types.ObjectId(studentId), examId:new mongoose.Types.ObjectId(examId) }),
         Exam.findById(examId).select("examName")
     ]);
 
@@ -42,7 +43,7 @@ const getExamResultForStudent = asyncHandler(async (req: Request, res: Response)
     }
 
     // Calculate overall score and average
-    const totalMaximumMarks = studentMarks.marks.reduce((sum, mark) => sum + (mark.maximumMarks || 0), 0);
+    const totalMaximumMarks = Object.values(studentMarks.maximumMarks).reduce((sum, maxMark) => sum + (maxMark |0),0);
     const averagePercentage = studentMarks.percentage;
 
 
@@ -59,8 +60,8 @@ const getExamResultForStudent = asyncHandler(async (req: Request, res: Response)
             overallScore: `${studentMarks.totalMarks}/${totalMaximumMarks}`,
             average: averagePercentage,
         },
-        subjectWisePerformance: studentMarks.marks.map(mark => ({
-            subject: mark.subject,
+        subjectWisePerformance: Object.entries(studentMarks.marks).map(([subject, mark]) => ({
+            subject,
             marks: mark.obtainMarks,
             total: mark.maximumMarks,
             percentage: ((mark.obtainMarks / mark.maximumMarks) * 100).toFixed(0)
@@ -73,13 +74,10 @@ const getExamResultForStudent = asyncHandler(async (req: Request, res: Response)
 });
 
 
-/**
- * @description Get a student's annual report card
- * @route GET /api/v1/marks/report-card/student/:studentId/year/:academicYear
- * @access Private (e.g., student, parent, teacher)
- */
+// get annual report card
 const getAnnualReportCard = asyncHandler(async (req: Request, res: Response) => {
-    const { studentId, academicYear } = req.params;
+    const { resultClass, academicYear } = req.params;
+    const studentId:string=req.user?.id as string;
 
     // Validate ID
     if (!mongoose.Types.ObjectId.isValid(studentId)) {
@@ -87,17 +85,19 @@ const getAnnualReportCard = asyncHandler(async (req: Request, res: Response) => 
     }
 
     // Fetch student and report card data concurrently
-    const [student, reportCard] = await Promise.all([
-        Student.findById(studentId).select("name rollNumber class section"),
-        Report.findOne({ studentId, academicYear })
-    ]);
+    let reportCard=await Report.findOne({ studentId:new mongoose.Types.ObjectId(studentId), academicYear })
 
+    if(!reportCard){
+         try{
+             reportCard = await generateReportCard(academicYear, studentId);
+         }catch(error:any){
+            throw new ApiError(StatusCode.InternalServerError,error.message)
+         }
+    }
+    const student= await Student.findById(studentId).select("name rollNumber class section")
+    
     if (!student) {
         throw new ApiError(StatusCode.NotFound, "Student not found");
-    }
-
-    if (!reportCard) {
-        throw new ApiError(StatusCode.NotFound, "Annual report card for this student and academic year not found");
     }
 
     // Structure the data for the frontend
@@ -110,9 +110,9 @@ const getAnnualReportCard = asyncHandler(async (req: Request, res: Response) => 
             name: `${student.name.firstName} ${student.name.lastName}`,
             rollNumber: student.rollNumber,
             class: `${student.class}-${student.section}`,
-            academicYear: reportCard.academicYear,
+            academicYear: reportCard?.academicYear,
         },
-        subjectWisePerformance: reportCard.subjectMarks.map(mark => ({
+        subjectWisePerformance: reportCard?.subjectMarks.map(mark => ({
             subjectName: mark.subject,
             // Assuming obtainMarks is total theory+practical for now
             theoryMarks: mark.obtainMarks, // Placeholder, adjust if model changes
@@ -122,10 +122,10 @@ const getAnnualReportCard = asyncHandler(async (req: Request, res: Response) => 
             grade: reportCard.subjectGrade.get(mark.subject) || "N/A"
         })),
         summary: {
-            remarks: reportCard.status === "passed" ? "Excellent" : "Needs Improvement", // Example logic
-            totalMarks: reportCard.overallMarks,
-            maxMarks: reportCard.subjectMarks.reduce((sum, mark) => sum + (mark.maximumMarks || 0), 0),
-            finalGrade: reportCard.OverallGrade
+            remarks: reportCard?.status === "passed" ? "Excellent" : "Needs Improvement", // Example logic
+            totalMarks: reportCard?.overallMarks,
+            maxMarks: reportCard?.maximumMarks,
+            finalGrade: reportCard?.OverallGrade
         }
     };
 

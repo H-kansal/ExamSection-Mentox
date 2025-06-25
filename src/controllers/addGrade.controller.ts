@@ -39,7 +39,7 @@ export const updateGrade=asyncHandler(async(req:Request,res:Response)=>{
     gradeScheme.grades=gradeScheme.grades.map((ele)=>((ele.grade==grade || ele.range==range || ele.points==points)? {...ele,range:range,grade:grade,points:points}: ele))
     
     await gradeScheme.save();
-    res.status(StatusCode.OK).json(new ApiResponse(StatusCode.OK,"range added"));
+    res.status(StatusCode.OK).json(new ApiResponse(StatusCode.OK,"range update"));
 })
 
 export const deleteGrade=asyncHandler(async(req:Request,res:Response)=>{
@@ -58,6 +58,6 @@ export const deleteGrade=asyncHandler(async(req:Request,res:Response)=>{
     
     await gradeScheme.save();
 
-    res.status(StatusCode.OK).json(new ApiResponse(StatusCode.OK,"range added"));
+    res.status(StatusCode.OK).json(new ApiResponse(StatusCode.OK,"range delete"));
 })
 

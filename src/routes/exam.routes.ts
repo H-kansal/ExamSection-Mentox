@@ -8,10 +8,10 @@ import {
 const router = Router();
 
 
-router.route("/").get(getAllExams);
+router.route("/getallexam").get(getAllExams);
 
 
-router.route("/search").get(searchExams);
+router.route("/searchexam").get(searchExams);
 
 
 router.route("/:examId").get(getExamById);

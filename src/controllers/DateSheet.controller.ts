@@ -9,7 +9,7 @@ import mongoose from "mongoose";
 import Student from "../models/student.mode.js";
 
 export const searchDateSheet=asyncHandler(async(req:Request,res:Response)=>{
-     const {academicYear,examName}=req.body;
+     const {academicYear,examName}=req.params;
 
     if(!academicYear || !examName) throw new ApiError(StatusCode.BadRequest,"please provide all valid field");
 
@@ -51,7 +51,7 @@ export const deleteDatesheet=asyncHandler(async(req:Request,res:Response)=>{
 
 export const editDateSheet=asyncHandler(async(req:Request,res:Response)=>{
       const {academicYear,examName,examClass,datesheet}=req.body;
-      const datesheetId:string=req.body.datesheetId as string
+      const datesheetId:string=req.params.datesheetId as string
       
       if(!datesheetId || !academicYear || !examName || !examClass || !datesheet) throw new ApiError(StatusCode.BadRequest,"please provide all fields");
 

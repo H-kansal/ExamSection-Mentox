@@ -6,7 +6,7 @@ const gradeRouter=Router();
 
 gradeRouter.route('/creategrade').post(createGrade);
 gradeRouter.route('/deletegrade').delete(deleteGrade);
-gradeRouter.route('/readgrade').post(readGrade);
+gradeRouter.route('/readgrade').get(readGrade);
 gradeRouter.route('/updategrade').post(updateGrade);
 
 export default gradeRouter;

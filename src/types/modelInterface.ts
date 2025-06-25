@@ -103,6 +103,7 @@ export interface IReporCard{
    percentage:number;
    OverallGrade:string;
    overallMarks:number;
+   maximumMarks:number;
    academicYear:string;
    status: "passed" | "failed";
 }

@@ -11,7 +11,7 @@ import MarksAssign from "../models/marksAssign.model.js";
 import Student from "../models/student.mode.js";
 
 
-// 
+// admin side 
 export const showAssignMarksPortal=asyncHandler(async(req:Request,res:Response)=>{
     const {academicYear,examName}=req.body;
     
@@ -38,6 +38,7 @@ export const showAssignMarksPortal=asyncHandler(async(req:Request,res:Response)=
         {
             $project:{
                 examName:1,
+                examClass:1,
                 sectionsCount:{$size:"$sections"},
                 examTerm:1,
                 academicYear:1,
@@ -53,7 +54,7 @@ export const showAssignMarksPortal=asyncHandler(async(req:Request,res:Response)=
 })
 
 
-// assign maarks to teacher
+// assign maarks to teacher from admin side
 export const assignMarksToTeacher=asyncHandler(async(req:Request,res:Response)=>{
     const {academicYear,examClass,section,examName,startDate,endDate,assignTeachers}=req.body;
 
@@ -113,9 +114,9 @@ export const assignMarksToTeacher=asyncHandler(async(req:Request,res:Response)=>
 
 
 
-// when teacher click on enter mark btn
+// when teacher click on enter mark btn on teacher side
 export const enterMark=asyncHandler(async(req:Request,res:Response)=>{
-    const examId:string=req.body.examId as string
+    const examId:string=req.query.examId as string
     const {section,subject}=req.body;   // need examid,section,subject only which are send when we are sending the teacher assign exams, this decrease the search for that specific exam
 
     const students=await StudentMarks.aggregate([
@@ -162,7 +163,7 @@ export const enterMark=asyncHandler(async(req:Request,res:Response)=>{
 })
 
 
-//for submit button
+//for submit button on teacher side
 export const SubmitStudentMarks=asyncHandler(async(req:Request,res:Response)=>{
       const examId:string=req.body.examId as string 
       const {subject,marks,maxMarks}=req.body;
@@ -193,7 +194,7 @@ export const SubmitStudentMarks=asyncHandler(async(req:Request,res:Response)=>{
 })
 
 
-// search wala
+// marks entry and view search on teacher side
 export const viewMark=asyncHandler(async(req:Request,res:Response)=>{
     const {session,examClass,subject,examName,section}=req.body;
 
@@ -234,12 +235,14 @@ export const viewMark=asyncHandler(async(req:Request,res:Response)=>{
                 subjectMarks: {
                     $ifNull: [`$marks.${subject}`, null]
                 },
-                remark:1           
+                subjectRemark:{
+                    $ifNull: [`$remark.${subject}`, null]
+                }           
             }
        }
     ])
 
-    const averageMark=await StudentMarks.aggregate([
+    const subjectMark=await StudentMarks.aggregate([
         {
             $match:{
                 examId:exam?._id
@@ -263,32 +266,25 @@ export const viewMark=asyncHandler(async(req:Request,res:Response)=>{
         },
         {
             $project: {
-                subjectMark: `$marks.${subject}`
+                subjectMark: `$marks.${subject}`,
+                maxMark:`$maximumMarks.${subject}`
             }
         },
-
-        //Filter out documents where subject mark is null
-        {
-            $match: {
-                subjectMark: { $ne: null }
-            }
-        },
-
-        // Group to calculate average
-        {
-            $group: {
-                _id: null,
-                averageMarks: { $avg: "$subjectMark" },
-                count: { $sum: 1 }
-            }
-        }
     ])
-    
-    if(!students || !averageMark) throw new ApiError(StatusCode.InternalServerError,"something went wrong please try again");
 
-    if(averageMark.length>0){
-        res.status(StatusCode.OK).json(new ApiResponse(StatusCode.OK,"all students",{students,averageMark}));
-    }else{
-        res.status(StatusCode.OK).json(new ApiResponse(StatusCode.OK,"all students",{students,averageMark:{averageMark:0}}));
+
+    
+    if(!students || !subjectMark || subjectMark.length===0) throw new ApiError(StatusCode.InternalServerError,"something went wrong please try again");
+    
+    let totalMarks=0;
+    let maximumMarks=0;
+    for(const entry of subjectMark){
+        totalMarks+=entry.subjectMark || 0;
+        maximumMarks+=entry.maxMark || 0;
     }
+
+    const avgMark=totalMarks/subjectMark.length;
+    const avgPercentage=((totalMarks/maximumMarks)*100).toFixed(0);
+
+    res.status(StatusCode.OK).json(new ApiResponse(StatusCode.OK,"all students",{students,averageMark:avgMark,count:subjectMark,avgPercentage:avgPercentage}));
 })

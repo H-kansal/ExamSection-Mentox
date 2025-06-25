@@ -5,7 +5,7 @@ const datesheetRouter=Router();
 
 datesheetRouter.route('/createdatasheet').post(createDateSheet)
 datesheetRouter.route('/editdatasheet').put(editDateSheet)
-datesheetRouter.route('/deletedatasheet/:datesheetId').delete(deleteDatesheet)
+datesheetRouter.route('/deletedatasheet/').delete(deleteDatesheet)
 datesheetRouter.route('/searchdatasheet').get(searchDateSheet)
 
 export default datesheetRouter;

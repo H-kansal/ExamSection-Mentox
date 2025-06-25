@@ -12,6 +12,9 @@ const reportCardSchema=new mongoose.Schema<IReporCard>({
     overallMarks:{
         type:Number
     },
+    maximumMarks:{
+        type:Number
+    },
     OverallGrade:{
        type:String
     },
